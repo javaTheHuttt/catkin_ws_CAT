@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # using the example of the slides 02-19
 
@@ -6,7 +6,7 @@ import rospy
 
 # this does not work
 # TODO: find out which type to import
-from autominy_msgs import Speed
+from autominy_msgs.msg import Speed
 
 def received_speed_callback(raw_msg):
     # TODO: we probably need to process this to get the speed e.g. as a float
