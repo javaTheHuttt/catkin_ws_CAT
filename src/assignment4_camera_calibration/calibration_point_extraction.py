@@ -33,6 +33,16 @@ def mask_unrelated_areas(image, width, height):
     # bottom area
     cv2.rectangle(image, (0,height-230), (width,height), black, -1)
 
+# publish image from 2D matrix
+def publish_image(camera_image, image_matrix):
+    # convert 2D matrix to buffer (1D array) of uint8
+    image_matrix = image_matrix.ravel()
+    image_matrix = np.uint8(image_matrix)
+    image_matrix = image_matrix.tolist()
+
+    camera_image.data = image_matrix
+    publisher.publish(camera_image)
+
 # subscriber callback
 def received_image_callback(camera_image):
     print(f"Received {camera_image.width} x {camera_image.height} camera image with {camera_image.encoding} encoding")
@@ -48,14 +58,9 @@ def received_image_callback(camera_image):
     _, binary_image = cv2.threshold(image, 254, 255, cv2.THRESH_BINARY)
     # print_debug_image(binary_image, "Binary")
 
-    # convert 2D matrix to buffer (1D array) of uint8
-    binary_image = binary_image.ravel()
-    binary_image = np.uint8(binary_image)
-    binary_image = binary_image.tolist()
+    # publish the binary image to view in rviz
+    publish_image(camera_image, binary_image)
 
-    camera_image.data = binary_image
-    print(type(binary_image))
-    publisher.publish(camera_image)
 
 rospy.init_node("binary_image_conversion_node")
 
