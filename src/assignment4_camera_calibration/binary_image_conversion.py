@@ -30,7 +30,7 @@ def mask_unrelated_areas(image, width, height):
     # top area
     cv2.rectangle(image, (0,0), (width,100), black, -1) # -1 means fill
 
-    # bottim area
+    # bottom area
     cv2.rectangle(image, (0,height-230), (width,height), black, -1)
 
 # subscriber callback
@@ -46,12 +46,24 @@ def received_image_callback(camera_image):
 
     # 254 is the maximum threshhold value usable here
     _, binary_image = cv2.threshold(image, 254, 255, cv2.THRESH_BINARY)
-    print_debug_image(binary_image, "Binary")
+    # print_debug_image(binary_image, "Binary")
 
-    # TODO: publish image
+    # convert 2D matrix to buffer (1D array) of uint8
+    binary_image = binary_image.ravel()
+    binary_image = np.uint8(binary_image)
+    binary_image = binary_image.tolist()
+
+    camera_image.data = binary_image
+    print(type(binary_image))
+    publisher.publish(camera_image)
 
 rospy.init_node("binary_image_conversion_node")
+
+# register subscribers
 rospy.Subscriber("/sensors/camera/infra1/image_rect_raw", Image, received_image_callback)
+
+# register publishers
+publisher = rospy.Publisher("/sensors/camera/infra1/image_rect_raw_binary", Image, queue_size=10)
 
 # block until node shuts down
 rospy.spin()
