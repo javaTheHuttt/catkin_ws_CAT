@@ -5,6 +5,7 @@ import rospy
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from cat_msgs.msg import Test
 
 ###
 ### Debug methods
