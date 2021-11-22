@@ -5,6 +5,7 @@ import rospy
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from our_msgs.msg import Point, Points
 
 ###
 ### Debug methods
@@ -94,6 +95,15 @@ def calculate_calibration_positions(binary_image):
 
     return centers
 
+def publish_calibration_points(points):
+    points_msg = Points()
+    for elem in points.tolist():
+        point = Point()
+        point.x = elem[0]
+        point.y = elem[1]
+        points_msg.data.append(point)
+    publisher_calibration_points.publish(points_msg)
+
 # subscriber callback
 def received_image_callback(camera_image):
     print(f"Received {camera_image.width} x {camera_image.height} camera image with {camera_image.encoding} encoding")
@@ -115,7 +125,8 @@ def received_image_callback(camera_image):
     # extract the average position of the calibration points
     calibration_points = calculate_calibration_positions(binary_image)
 
-    # TODO: publish calibration points, define new message type with 6 points
+    # publish calibration points (6 points)
+    publish_calibration_points(calibration_points)
 
 rospy.init_node("binary_image_conversion_node")
 
@@ -124,6 +135,8 @@ rospy.Subscriber("/sensors/camera/infra1/image_rect_raw", Image, received_image_
 
 # register publishers
 publisher = rospy.Publisher("/sensors/camera/infra1/image_rect_raw_binary", Image, queue_size=10)
+
+publisher_calibration_points = rospy.Publisher("/sensors/camera/infra1/image_rect_raw_points", Points, queue_size=10)
 
 # block until node shuts down
 rospy.spin()
