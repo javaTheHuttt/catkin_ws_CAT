@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from sensor_msgs.msg import CameraInfo
 import rospy
+from our_msgs.msg import CameraParameters
 
 def received_info_callback(camera_info):
     print("Received camera Info:")
@@ -23,9 +24,22 @@ def received_info_callback(camera_info):
     k3 = distortion_parameters[4]
     print(f"k1 = {k1}; k2 = {k2}; t1 = {t1}; t2 = {t2}; k3 = {k3}")
     print()
+    msg = CameraParameters()
+    msg.fx = fx
+    msg.fy = fy
+    msg.cx = cx
+    msg.cy = cy
+
+    msg.k1 = k1
+    msg.k2 = k2
+    msg.t1 = t1
+    msg.t2 = t2
+    msg.k3 = k3
+    publisher.publish(msg)
 
 rospy.init_node("camera_info_extraction_node")
 rospy.Subscriber("/sensors/camera/infra1/camera_info", CameraInfo, received_info_callback)
+publisher = rospy.Publisher("/sensors/camera/infra1/image_rect_raw_cam_params", CameraParameters, queue_size=10)
 
 # block until node shuts down
 rospy.spin()

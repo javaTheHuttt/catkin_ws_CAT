@@ -102,7 +102,7 @@ def publish_calibration_points(points):
         point.x = elem[0]
         point.y = elem[1]
         points_msg.data.append(point)
-    publisher_calibration_points.publish(points_msg)
+    publisher_calibration_points.publish(points_msg) 
 
 # subscriber callback
 def received_image_callback(camera_image):

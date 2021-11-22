@@ -50,6 +50,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    Point.msg
    Points.msg
+   CameraParameters.msg
 #   Message2.msg
  )
 
