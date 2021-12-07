@@ -7,6 +7,7 @@ from geometry_msgs.msg import Pose, PoseArray
 
 class OccupancyGridNode:
 
+    # initialize ros, grid, publisher and subscriber
     def __init__(self) -> None:
 
         rospy.init_node("assignment6_occupancy_grid")
@@ -50,6 +51,7 @@ class OccupancyGridNode:
 
         self.grid.data = np.zeros(dtype=np.int8, shape=(self.num_cells_width * self.num_cells_height))
 
+    # calculate, update and publish grid if new lidar poses were received
     def received_pose_array_callback(self, pose_array):
         for pose in pose_array.poses:
             self.update_grid(pose.position.x, pose.position.y)
@@ -63,9 +65,12 @@ class OccupancyGridNode:
             print(x, y, "outside map")
             return
 
+        # calculate grid index based on coordinates
         index = int(int(x) * self.num_cells_width + int(y) / self.meters_per_cell)
+        # same grid used every time, so that previous points remain
         self.grid.data[index] = 100 # cell occupied
 
+        # update header
         self.seq_header += 1
         self.grid.header.seq = self.seq_header
 
