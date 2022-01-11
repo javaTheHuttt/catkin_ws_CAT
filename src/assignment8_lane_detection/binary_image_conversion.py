@@ -73,7 +73,6 @@ def received_image_callback(camera_image):
     # mask unrelated areas with black rectangles
     mask_unrelated_areas(image, camera_image.width, camera_image.height)
 
-    # 254 is the maximum threshhold value usable here
     _, binary_image = cv2.threshold(image, 190, 255, cv2.THRESH_BINARY)
     # print_debug_image(binary_image, "Binary")
 
